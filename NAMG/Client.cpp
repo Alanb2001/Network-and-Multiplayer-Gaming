@@ -8,11 +8,11 @@ Client::Client()
     m_Quit(false),
 	m_MessageSend(),
 	m_OldMessage(),
-	m_Thread()
+	m_Thread(0)
 {
 }
 
-void Client::DoStuff()
+void Client::Messages()
 {
 	while (!m_Quit)
 	{
@@ -65,7 +65,7 @@ void Client::Run()
 
 	GameClient();
 
-	m_Thread = new sf::Thread(&Client::DoStuff, &client);
+	m_Thread = new sf::Thread(&Client::Messages, &client);
 	m_Thread->launch();
 
 	while (!m_Quit)

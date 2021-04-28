@@ -6,7 +6,7 @@ class Client
 {
 public:
 	Client();
-	void DoStuff();
+	void Messages();
 	bool GameClient();
 	void GetInput();
 	void Run();

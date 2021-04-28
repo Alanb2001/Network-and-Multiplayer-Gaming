@@ -3,5 +3,5 @@
 int main()
 {
 	Server server;
-	server.GameServer();
+	server.Run();
 }
