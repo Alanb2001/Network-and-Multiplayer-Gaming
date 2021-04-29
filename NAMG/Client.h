@@ -20,5 +20,9 @@ private:
 	std::string m_MessageSend;
 	std::string m_OldMessage;
 	sf::Thread* m_Thread;
+	sf::Packet m_PacketSend;
+	std::string m_Message;
+	sf::Packet m_PacketReceive;
+	std::string m_UserMessage;
 };
 

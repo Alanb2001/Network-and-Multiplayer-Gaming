@@ -15,7 +15,7 @@ int points[num][2] = { 300, 610,
 struct Car
 {
     float x, y, speed, angle; int n;
-    Car() { speed = 2; angle = 0; n = 0; }
+    Car() { speed = 2; angle = 0; n = 0; x = 0; y = 0; }
     void move()
     {
         x += sin(angle) * speed;

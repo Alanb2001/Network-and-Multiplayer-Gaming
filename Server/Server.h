@@ -20,4 +20,8 @@ private:
 	sf::Mutex m_GlobalMutex;
 	bool m_Quit;
 	sf::Thread* m_Thread;
+	sf::Packet m_PacketSend;
+	std::string m_Message;
+	sf::Packet m_PacketReceive;
+	std::string m_UserMessage;
 };

@@ -8,7 +8,11 @@ Server::Server()
 	m_OldMessage(),
 	m_GlobalMutex(),
 	m_Quit(false),
-	m_Thread(0)
+	m_Thread(0),
+	m_PacketSend(),
+	m_Message(),
+	m_PacketReceive(),
+	m_UserMessage()
 {
 }
 
@@ -16,21 +20,17 @@ void Server::Messages()
 {
 	while (!m_Quit)
 	{
-		sf::Packet packetSend;
 		m_GlobalMutex.lock();
-		packetSend << m_MessageSend;
+		m_PacketSend << m_MessageSend;
 		m_GlobalMutex.unlock();
 
-		m_Socket.send(packetSend);
+		m_Socket.send(m_PacketSend);
 
-		std::string msg;
-		sf::Packet packetReceive;
-
-		m_Socket.receive(packetReceive);
-		if ((packetReceive >> msg) && m_OldMessage != msg && !msg.empty())
+		m_Socket.receive(m_PacketReceive);
+		if ((m_PacketReceive >> m_Message) && m_OldMessage != m_Message && !m_Message.empty())
 		{
-			std::cout << msg << std::endl;
-			m_OldMessage = msg;
+			std::cout << m_Message << std::endl;
+			m_OldMessage = m_Message;
 		}
 	}
 }
@@ -44,15 +44,14 @@ void Server::GameServer()
 
 void Server::GetInput()
 {
-	std::string s;
 	std::cout << "\nEnter \"exit\" to quit or message to send: ";
-	getline(std::cin, s);
-	if (s == "exit")
+	getline(std::cin, m_UserMessage);
+	if (m_UserMessage == "exit")
 	{
 		m_Quit = true;
 	}
 	m_GlobalMutex.lock();
-	m_MessageSend = s;
+	m_MessageSend = m_UserMessage;
 	m_GlobalMutex.unlock();
 }
 
