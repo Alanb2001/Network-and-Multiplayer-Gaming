@@ -46,21 +46,8 @@ float R = 22;
 const int N = 5;
 Car car[N];
 
-
 Client::Client()
-:	m_Port(5000),
-	m_Address(sf::IpAddress::getLocalAddress()),
-	m_Socket(),
-	m_GlobalMutex(),
-	m_Quit(false),
-	m_MessageSend(),
-	m_OldMessage(),
-	m_Thread(0),
-	m_Message(),
-	m_PacketSend(),
-	m_PacketReceive(),
-	m_UserMessage(),
-    m_window(sf::VideoMode(640, 480), "NAMG", sf::Style::Close),
+:	m_window(sf::VideoMode(640, 480), "NAMG", sf::Style::Close),
     m_BackgroundTexture(),
     m_CarTexture(),
     m_BackgroundSprite(),
@@ -89,13 +76,18 @@ Client::Client()
 
 void Client::Messages()
 {
+    static std::string m_OldMessage;
 	while (!m_Quit)
 	{
+        sf::Packet m_PacketSend;
 		m_GlobalMutex.lock();
 		m_PacketSend << m_MessageSend;
 		m_GlobalMutex.unlock();
 
 		m_Socket.send(m_PacketSend);
+
+        std::string m_Message;
+        sf::Packet m_PacketReceive;
 
 		m_Socket.receive(m_PacketReceive);
 		if ((m_PacketReceive >> m_Message) && m_OldMessage != m_Message && !m_Message.empty())
@@ -118,6 +110,7 @@ bool Client::GameClient()
 
 void Client::GetInput()
 {
+    std::string m_UserMessage;
 	std::cout << "\nEnter \"exit\" to quit or message to send: ";
 	getline(std::cin, m_UserMessage);
 	if (m_UserMessage == "exit")
@@ -129,8 +122,10 @@ void Client::GetInput()
 	m_GlobalMutex.unlock();
 }
 
-void Client::Run()
+int Client::Run()
 {
+    sf::Thread* m_Thread = 0;
+
 	GameClient();
 
 	m_Thread = new sf::Thread(&Client::Messages, this);
@@ -176,6 +171,7 @@ void Client::Run()
         m_window.display();
     }
 
+    return 0;
 }
 
 void Client::Events()

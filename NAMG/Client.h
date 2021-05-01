@@ -10,24 +10,19 @@ public:
 	void Messages();
 	bool GameClient();
 	void GetInput();
-	void Run();
+	int Run();
 	void Events();
 	void Movement();
 	void Collision();
 
-private:
-	const unsigned short m_Port;
-	sf::IpAddress m_Address;
+	const unsigned short m_Port = 5000;
+	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
 	sf::TcpSocket m_Socket;
 	sf::Mutex m_GlobalMutex;
-	bool m_Quit;
+	bool m_Quit = false;
 	std::string m_MessageSend;
-	std::string m_OldMessage;
-	sf::Thread* m_Thread;
-	sf::Packet m_PacketSend;
-	std::string m_Message;
-	sf::Packet m_PacketReceive;
-	std::string m_UserMessage;
+
+private:
 	sf::RenderWindow m_window;
 	sf::Texture m_BackgroundTexture;
 	sf::Texture m_CarTexture;
