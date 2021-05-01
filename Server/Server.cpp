@@ -57,11 +57,9 @@ void Server::GetInput()
 
 void Server::Run()
 {
-	Server server;
-
 	GameServer();
 
-	m_Thread = new sf::Thread(&Server::Messages, &server);
+	m_Thread = new sf::Thread(&Server::Messages, this);
 	m_Thread->launch();
 
 	while (!m_Quit)
