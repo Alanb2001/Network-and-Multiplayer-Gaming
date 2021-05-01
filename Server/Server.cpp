@@ -2,68 +2,68 @@
 
 void Server::Messages()
 {
-	static std::string m_OldMessage;
+	std::string oldMessage;
 	while (!m_Quit)
 	{
-		sf::Packet m_PacketSend;
+		sf::Packet packetSend;
 		m_GlobalMutex.lock();
-		m_PacketSend << m_MessageSend;
+		packetSend << m_MessageSend;
 		m_GlobalMutex.unlock();
 
-		m_Socket.send(m_PacketSend);
+		m_Socket.send(packetSend);
 
-		std::string m_Message;
-		sf::Packet m_PacketReceive;
+		std::string message;
+		sf::Packet packetReceive;
 
-		m_Socket.receive(m_PacketReceive);
-		if ((m_PacketReceive >> m_Message) && m_OldMessage != m_Message && !m_Message.empty())
+		m_Socket.receive(packetReceive);
+		if ((packetReceive >> message) && oldMessage != message && !message.empty())
 		{
-			std::cout << m_Message << std::endl;
-			m_OldMessage = m_Message;
+			std::cout << message << std::endl;
+			oldMessage = message;
 		}
 	}
 }
 
 void Server::GameServer()
 {
-	sf::TcpListener m_Listener;
-	m_Listener.listen(m_Port);
-	m_Listener.accept(m_Socket);
+	sf::TcpListener listener;
+	listener.listen(m_Port);
+	listener.accept(m_Socket);
 	std::cout << "New client connected: " << m_Socket.getRemoteAddress() << std::endl;
 }
 
 void Server::GetInput()
 {
-	std::string m_UserMessage;
+	std::string userMessage;
 	std::cout << "\nEnter \"exit\" to quit or message to send: ";
-	getline(std::cin, m_UserMessage);
-	if (m_UserMessage == "exit")
+	getline(std::cin, userMessage);
+	if (userMessage == "exit")
 	{
 		m_Quit = true;
 	}
 	m_GlobalMutex.lock();
-	m_MessageSend = m_UserMessage;
+	m_MessageSend = userMessage;
 	m_GlobalMutex.unlock();
 }
 
 int Server::Run()
 {
-	sf::Thread* m_Thread = 0;
+	sf::Thread* thread = 0;
 
 	GameServer();
 
-	m_Thread = new sf::Thread(&Server::Messages, this);
-	m_Thread->launch();
+	thread = new sf::Thread(&Server::Messages, this);
+	thread->launch();
 
 	while (!m_Quit)
 	{
 		GetInput();
 	}
 
-	if (m_Thread)
+	if (thread)
 	{
-		m_Thread->wait();
-		delete m_Thread;
+		thread->wait();
+		delete thread;
 	}
 
 	return 0;

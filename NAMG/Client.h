@@ -15,14 +15,13 @@ public:
 	void Movement();
 	void Collision();
 
+private:
 	const unsigned short m_Port = 5000;
 	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
 	sf::TcpSocket m_Socket;
 	sf::Mutex m_GlobalMutex;
 	bool m_Quit = false;
 	std::string m_MessageSend;
-
-private:
 	sf::RenderWindow m_window;
 	sf::Texture m_BackgroundTexture;
 	sf::Texture m_CarTexture;

@@ -10,6 +10,7 @@ public:
 	void GetInput();
 	int Run();
 
+private:
 	const unsigned short m_Port = 5000;
 	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
 	sf::TcpSocket m_Socket;
