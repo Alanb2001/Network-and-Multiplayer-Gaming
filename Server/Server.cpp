@@ -10,26 +10,91 @@ void Server::Messages()
 		packetSend << m_MessageSend;
 		m_GlobalMutex.unlock();
 
-		m_Socket.send(packetSend);
+		m_Clients.send(packetSend);
 
 		std::string message;
 		sf::Packet packetReceive;
 
-		m_Socket.receive(packetReceive);
+		m_Clients.receive(packetReceive);
+
 		if ((packetReceive >> message) && oldMessage != message && !message.empty())
 		{
 			std::cout << message << std::endl;
 			oldMessage = message;
 		}
+
+		//for (std::list<sf::TcpSocket*>::iterator it = m_Clients.begin(); it != m_Clients.end(); ++it)
+		//{
+		//	sf::TcpSocket& client = **it;
+		//	if (m_Selector.isReady(client))
+		//	{
+		//		sf::Packet packetSend;
+		//		m_GlobalMutex.lock();
+		//		packetSend << m_MessageSend;
+		//		m_GlobalMutex.unlock();
+
+		//		if (client.send(packetSend) == sf::Socket::Done)
+		//		{
+		//			std::string message;
+		//			sf::Packet packetReceive;
+
+		//			if (client.receive(packetReceive) == sf::Socket::Done)
+		//			{
+		//				if ((packetReceive >> message) && oldMessage != message && !message.empty())
+		//				{
+		//					std::cout << message << std::endl;
+		//					oldMessage = message;
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 }
 
 void Server::GameServer()
 {
-	sf::TcpListener listener;
-	listener.listen(m_Port);
-	listener.accept(m_Socket);
-	std::cout << "New client connected: " << m_Socket.getRemoteAddress() << std::endl;
+	m_Listener.listen(m_Port);
+	m_Listener.accept(m_Clients);
+	std::cout << "New client connected: " << m_Clients.getRemoteAddress() << std::endl;
+
+	//m_Listener.listen(m_Port);
+	//m_Selector.add(m_Listener);
+	//while (!m_Quit)
+	//{
+	//	if (m_Selector.wait())
+	//	{
+	//		if (m_Selector.isReady(m_Listener))
+	//		{
+	//			sf::TcpSocket* client = new sf::TcpSocket;
+	//			if (m_Listener.accept(*client) == sf::Socket::Done)
+	//			{
+	//				m_Clients.push_back(client);
+	//				
+	//				m_Selector.add(*client);
+	//			}
+	//			else
+	//			{
+	//				delete client;
+	//			}
+	//		}
+	//		else
+	//		{
+	//			for (std::list<sf::TcpSocket*>::iterator it = m_Clients.begin(); it != m_Clients.end(); ++it)
+	//			{
+	//				sf::TcpSocket& client = **it;
+	//				if (m_Selector.isReady(client))
+	//				{
+	//					sf::Packet packet;
+	//					if (client.receive(packet) == sf::Socket::Done)
+	//					{
+	//						std::cout << "New client connected: " << client.getRemoteAddress() << std::endl;
+	//					}
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 }
 
 void Server::GetInput()

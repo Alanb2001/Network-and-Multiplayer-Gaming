@@ -180,7 +180,9 @@ void Client::Events()
     while (m_window.pollEvent(e))
     {
         if (e.type == sf::Event::Closed)
+        {
             m_window.close();
+        }
     }
 }
 
