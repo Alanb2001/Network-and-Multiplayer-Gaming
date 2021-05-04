@@ -84,7 +84,10 @@ void Client::Messages()
 		packetSend << m_MessageSend;
 		m_GlobalMutex.unlock();
 
-		m_Socket.send(packetSend);
+		if (m_Socket.send(packetSend) != sf::Socket::Done)
+		{
+			std::cout << "Error" << std::endl;
+		}
 
         std::string message;
         sf::Packet packetReceive;

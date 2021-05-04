@@ -14,8 +14,8 @@ public:
 private:
 	const unsigned short m_Port = 5000;
 	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
-	//std::list<sf::TcpSocket*> m_Clients;
-	sf::TcpSocket m_Clients;
+	std::list<sf::TcpSocket*> m_Clients;
+	//sf::TcpSocket m_Clients;
 	sf::Mutex m_GlobalMutex;
 	bool m_Quit = false;
 	std::string m_MessageSend;
