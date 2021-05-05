@@ -30,9 +30,9 @@ void Server::Messages()
 			if (m_Selector.isReady(client))
 			{
 				sf::Packet packetSend;
-				//m_GlobalMutex.lock();
+				m_GlobalMutex.lock();
 				packetSend << m_MessageSend;
-				//m_GlobalMutex.unlock();
+				m_GlobalMutex.unlock();
 
 				if (client.send(packetSend) == sf::Socket::Done)
 				{
@@ -50,7 +50,7 @@ void Server::Messages()
 				}
 			}
 		}
-	//}
+	/*}*/
 }
 
 void Server::GameServer() 
@@ -59,10 +59,10 @@ void Server::GameServer()
 	//m_Listener.accept(m_Clients);
 	//std::cout << "New client connected: " << m_Clients.getRemoteAddress() << std::endl;
 	std::cout << "Entered the server loop" << std::endl;
-	/*m_Listener.listen(m_Port);
-	m_Selector.add(m_Listener);*/
-	//while (!m_Quit)
-	//{
+	m_Listener.listen(m_Port);
+	m_Selector.add(m_Listener);
+	/*while (!m_Quit)
+	{*/
 		if (m_Selector.wait())
 		{
 			if (m_Selector.isReady(m_Listener))
@@ -94,9 +94,9 @@ void Server::GameServer()
 						}
 					}
 				}
-			//}
+			/*}*/
 		}
-	//}
+	/*}*/
 }
 
 void Server::GetInput()
@@ -126,7 +126,7 @@ int Server::Run()
 	{
 		GameServer();
 		Messages();
-		// GetInput();
+	//	//GetInput();
 	}
 
 	//if (thread)

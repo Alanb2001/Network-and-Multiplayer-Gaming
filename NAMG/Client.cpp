@@ -77,12 +77,12 @@ Client::Client()
 void Client::Messages()
 {
     std::string oldMessage;
-	while (!m_Quit)
-	{
+	/*while (!m_Quit)
+	{*/
         sf::Packet packetSend;
-		m_GlobalMutex.lock();
+		//m_GlobalMutex.lock();
 		packetSend << m_MessageSend;
-		m_GlobalMutex.unlock();
+		//m_GlobalMutex.unlock();
 
 		if (m_Socket.send(packetSend) != sf::Socket::Done)
 		{
@@ -98,7 +98,7 @@ void Client::Messages()
 			std::cout << message << std::endl;
 			oldMessage = message;
 		}
-	}
+	/*}*/
 }
 
 bool Client::GameClient()
@@ -120,30 +120,32 @@ void Client::GetInput()
 	{
 		m_Quit = true;
 	}
-	m_GlobalMutex.lock();
+	//m_GlobalMutex.lock();
 	m_MessageSend = userMessage;
-	m_GlobalMutex.unlock();
+	//m_GlobalMutex.unlock();
 }
 
 int Client::Run()
 {
-    sf::Thread* thread = 0;
+    //sf::Thread* thread = 0;
 
 	GameClient();
 
-	thread = new sf::Thread(&Client::Messages, this);
-	thread->launch();
+	//thread = new sf::Thread(&Client::Messages, this);
+	//thread->launch();
 
 	while (!m_Quit)
 	{
+		//GameClient();
+		Messages();
 		GetInput();
 	}
 
-	if (thread)
-	{
-		thread->wait();
-		delete thread;
-	}
+	//if (thread)
+	//{
+	//	thread->wait();
+	//	delete thread;
+	//}
 
     // Starting positions
     for (int i = 0; i < N; i++)
