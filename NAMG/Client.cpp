@@ -61,6 +61,8 @@ Client::Client()
     m_OffsetX(0),
     m_OffsetY(0)
 {
+    std::cout << "Chat client started" << std::endl;
+
     m_window.setFramerateLimit(60);
 
     m_BackgroundTexture.loadFromFile("images/background.png");
@@ -74,78 +76,124 @@ Client::Client()
     m_CarSprite.setOrigin(22, 22);
 }
 
-void Client::Messages()
+void Client::ReceivePackets(sf::TcpSocket* socket)
 {
-    std::string oldMessage;
-	/*while (!m_Quit)
-	{*/
-        sf::Packet packetSend;
-		//m_GlobalMutex.lock();
-		packetSend << m_MessageSend;
-		//m_GlobalMutex.unlock();
+    //std::string oldMessage;
+    ///*while (!m_Quit)
+    //{*/
+    //sf::Packet packetSend;
+    ////m_GlobalMutex.lock();
+    //packetSend << m_MessageSend;
+    ////m_GlobalMutex.unlock();
 
-		if (m_Socket.send(packetSend) != sf::Socket::Done)
+    //if (m_Socket.send(packetSend) != sf::Socket::Done)
+    //{
+    //    std::cout << "Error" << std::endl;
+    //}
+
+    //std::string message;
+    //sf::Packet packetReceive;
+
+    //m_Socket.receive(packetReceive);
+    //if ((packetReceive >> message) && oldMessage != message && !message.empty())
+    //{
+    //    std::cout << message << std::endl;
+    //    oldMessage = message;
+    //}
+    ///*}*/
+
+	while (true)
+	{
+		if (socket->receive(m_Packet) == sf::Socket::Done)
 		{
-			std::cout << "Error" << std::endl;
+            std::string receviedString;
+            std::string senderAddress;
+            unsigned short senderPort;
+            m_Packet >> receviedString >> senderAddress >> senderPort;
+			std::cout << "From (" << senderAddress << ":" << senderPort << "): " << receviedString <<std::endl;
 		}
 
-        std::string message;
-        sf::Packet packetReceive;
+        std::this_thread::sleep_for((std::chrono::milliseconds)100);
+	}
+}
 
-		m_Socket.receive(packetReceive);
-		if ((packetReceive >> message) && oldMessage != message && !message.empty())
-		{
-			std::cout << message << std::endl;
-			oldMessage = message;
-		}
-	/*}*/
+void Client::SendPacket(sf::Packet& packet)
+{
+    if (packet.getDataSize() > 0 && m_Socket.send(packet) != sf::Socket::Done)
+    {
+        std::cout << "Could not send packet" << std::endl;
+    }
 }
 
 bool Client::GameClient()
 {
-	if (m_Socket.connect(m_Address, m_Port) == sf::Socket::Done)
+	if (m_Socket.connect(m_Address, m_Port) != sf::Socket::Done)
 	{
-		std::cout << "Connected\n";
+		std::cout << "Could not connect to the server\n";
 		return true;
 	}
+    else
+    {
+        m_IsConnected = true;
+        std::cout << "Connected to the server\n" << std::endl;
+    }
 	return false;
 }
 
-void Client::GetInput()
-{
-    std::string userMessage;
-	std::cout << "\nEnter \"exit\" to quit or message to send: ";
-	getline(std::cin, userMessage);
-	if (userMessage == "exit")
-	{
-		m_Quit = true;
-	}
-	//m_GlobalMutex.lock();
-	m_MessageSend = userMessage;
-	//m_GlobalMutex.unlock();
-}
+//void Client::GetInput()
+//{
+//  std::string userMessage;
+//	std::cout << "\nEnter \"exit\" to quit or message to send: ";
+//	getline(std::cin, userMessage);
+//	if (userMessage == "exit")
+//	{
+//		m_Quit = true;
+//	}
+//	//m_GlobalMutex.lock();
+//	m_MessageSend = userMessage;
+//	//m_GlobalMutex.unlock();
+//}
 
 int Client::Run()
 {
-    //sf::Thread* thread = 0;
+ //   //sf::Thread* thread = 0;
 
 	GameClient();
 
-	//thread = new sf::Thread(&Client::Messages, this);
-	//thread->launch();
+	////thread = new sf::Thread(&Client::Messages, this);
+	////thread->launch();
 
-	while (!m_Quit)
-	{
-		//GameClient();
-		Messages();
-		GetInput();
-	}
+	//while (!m_Quit)
+	//{
+	//	//GameClient();
+	//	Messages();
+	//	GetInput();
+	//}
 
 	//if (thread)
 	//{
 	//	thread->wait();
 	//	delete thread;
 	//}
+
+    std::thread receptionThread(&Client::ReceivePackets, this, &m_Socket);
+
+    while (!m_Quit)
+    {
+        if (m_IsConnected)
+        {
+            std::string userMessage;
+            getline(std::cin, userMessage);
+            if (userMessage == "exit")
+	        {
+		        m_Quit = true;
+	        }
+            sf::Packet replyPacket;
+            replyPacket << userMessage;
+
+            SendPacket(replyPacket);
+        }
+    }
 
     // Starting positions
     for (int i = 0; i < N; i++)

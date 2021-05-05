@@ -1,21 +1,26 @@
 #pragma once
 #include <iostream>
 #include <SFML/Network.hpp>
-#include <list>
+#include <vector>
+#include <chrono>
+#include <thread>
 
 class Server
 {
 public:
-	void Messages();
-	void GameServer();
-	void GetInput();
+	Server();
+	void BroadcastPacket(sf::Packet& packet, sf::IpAddress address, unsigned short port);
+	void ReceivePacket(sf::TcpSocket* client, size_t iterator);
+	void ConnectClients(std::vector<sf::TcpSocket*>* client);
+	void DisconnectClient(sf::TcpSocket* socket, size_t position);
+	//void GetInput();
+	void ManagePackets();
 	int Run();
 
 private:
 	const unsigned short m_Port = 5000;
 	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
-	std::list<sf::TcpSocket*> m_Clients;
-	//sf::TcpSocket m_Clients;
+	std::vector<sf::TcpSocket*> m_Clients;
 	sf::Mutex m_GlobalMutex;
 	bool m_Quit = false;
 	std::string m_MessageSend;

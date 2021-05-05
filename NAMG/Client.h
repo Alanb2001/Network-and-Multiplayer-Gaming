@@ -1,5 +1,7 @@
 #pragma once
 #include <iostream>
+#include <thread>
+#include <chrono>
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -7,9 +9,10 @@ class Client
 {
 public:
 	Client();
-	void Messages();
+	void ReceivePackets(sf::TcpSocket* socket);
+	void SendPacket(sf::Packet& packet);
 	bool GameClient();
-	void GetInput();
+	//void GetInput();
 	int Run();
 	void Events();
 	void Movement();
@@ -19,7 +22,9 @@ private:
 	const unsigned short m_Port = 5000;
 	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
 	sf::TcpSocket m_Socket;
+	sf::Packet m_Packet;
 	sf::Mutex m_GlobalMutex;
+	bool m_IsConnected = false;
 	bool m_Quit = false;
 	std::string m_MessageSend;
 	sf::RenderWindow m_window;
