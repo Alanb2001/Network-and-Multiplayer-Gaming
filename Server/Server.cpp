@@ -106,7 +106,7 @@ void Server::ConnectClients(std::vector<sf::TcpSocket*>* client)
 		{
 			newClient->setBlocking(false);
 			client->push_back(newClient);
-			std::cout << "Added client " << newClient->getRemoteAddress() << " on slot " << client->size();
+			std::cout << "Added client " << newClient->getRemoteAddress() << " on slot " << client->size() << std::endl;
 		}
 		else
 		{
