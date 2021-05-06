@@ -48,38 +48,36 @@ Car car[N];
 
 Client::Client()
 :	m_window(sf::VideoMode(640, 480), "NAMG", sf::Style::Close),
-    m_BackgroundTexture(),
-    m_CarTexture(),
-    m_BackgroundSprite(),
-    m_CarSprite(),
-    m_Speed(0),
-    m_Angle(0),
-    m_MaxSpeed(12.0),
-    m_Accelerate(0.2),
-    m_Decelerate(0.3),
-    m_TurnSpeed(0.08),
-    m_OffsetX(0),
-    m_OffsetY(0)
+    m_backgroundTexture(),
+    m_carTexture(),
+    m_backgroundSprite(),
+    m_carSprite(),
+    m_speed(0),
+    m_angle(0),
+    m_maxSpeed(12.0),
+    m_accelerate(0.2),
+    m_decelerate(0.3),
+    m_turnSpeed(0.08),
+    m_offsetX(0),
+    m_offsetY(0)
 {
     std::cout << "Chat client started" << std::endl;
 
     m_window.setFramerateLimit(60);
 
-    m_BackgroundTexture.loadFromFile("images/background.png");
-    m_BackgroundTexture.setSmooth(true);
-    m_BackgroundSprite.setTexture(m_BackgroundTexture);
-    m_BackgroundSprite.scale(2, 2);
+    m_backgroundTexture.loadFromFile("images/background.png");
+    m_backgroundTexture.setSmooth(true);
+    m_backgroundSprite.setTexture(m_backgroundTexture);
+    m_backgroundSprite.scale(2, 2);
 
-    m_CarTexture.loadFromFile("images/car.png");
-    m_CarTexture.setSmooth(true);
-    m_CarSprite.setTexture(m_CarTexture);
-    m_CarSprite.setOrigin(22, 22);
-
-
+    m_carTexture.loadFromFile("images/car.png");
+    m_carTexture.setSmooth(true);
+    m_carSprite.setTexture(m_carTexture);
+    m_carSprite.setOrigin(22, 22);
 
 	std::cout << "Enter a username: ";
 
-	std::cin >> m_Username;
+	std::cin >> m_username;
 
 }
 
@@ -111,8 +109,9 @@ void Client::ReceivePackets(sf::TcpSocket* socket)
 
 	while (true)
 	{
+        sf::Packet packet;
 		// m_Packet.clear();
-		if (socket->receive(m_Packet) == sf::Socket::Done)
+		if (socket->receive(packet) == sf::Socket::Done)
 		{
             //std::string receviedString;
             //std::string senderAddress;
@@ -120,7 +119,7 @@ void Client::ReceivePackets(sf::TcpSocket* socket)
             //m_Packet >> receviedString >> senderAddress >> senderPort;
 
 			CarData inCarData;
-			m_Packet >> inCarData; // TODO: Remove the member packet - create local packets to send out
+            packet >> inCarData; 
 
 			// std::cout << "From (" << senderAddress << ":" << senderPort << "): " << receviedString <<std::endl;
 			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_message << std::endl;
@@ -132,7 +131,7 @@ void Client::ReceivePackets(sf::TcpSocket* socket)
 
 void Client::SendPacket(sf::Packet& packet)
 {
-    if (packet.getDataSize() > 0 && m_Socket.send(packet) != sf::Socket::Done)
+    if (packet.getDataSize() > 0 && m_socket.send(packet) != sf::Socket::Done)
     {
         std::cout << "Could not send packet" << std::endl;
     }
@@ -140,14 +139,14 @@ void Client::SendPacket(sf::Packet& packet)
 
 bool Client::GameClient()
 {
-	if (m_Socket.connect(m_Address, m_Port) != sf::Socket::Done)
+	if (m_socket.connect(m_address, m_port) != sf::Socket::Done)
 	{
 		std::cout << "Could not connect to the server\n";
 		return true;
 	}
     else
     {
-        m_IsConnected = true;
+        m_isConnected = true;
         std::cout << "Connected to the server\n" << std::endl;
     }
 	return false;
@@ -171,8 +170,6 @@ int Client::Run()
 {
  //   //sf::Thread* thread = 0;
 
-	GameClient();
-
 	////thread = new sf::Thread(&Client::Messages, this);
 	////thread->launch();
 
@@ -189,39 +186,14 @@ int Client::Run()
 	//	delete thread;
 	//}
 
-    std::thread receptionThread(&Client::ReceivePackets, this, &m_Socket);
+    GameClient();
 
-    while (!m_Quit)
-    {
-        if (m_IsConnected)
-        {
-            std::string userMessage;
-            
-			getline(std::cin, userMessage);
+    std::thread receptionThread(&Client::ReceivePackets, this, &m_socket);
 
-			//std::cin >> userMessage;
+   /* while (!m_Quit)
+    {*/
 
-			// std::cin.getline()
-
-			//scanf_s("%[^\t\n]", userMessage.c_str());
-
-            if (userMessage == "exit")
-	        {
-		        m_Quit = true;
-	        }
-
-
-            sf::Packet replyPacket;
-
-			CarData outData(m_Username, userMessage, 123, 76839, 7238913);
-
-			// std::cout << outData.m_message << "\n\n";
-
-            replyPacket << outData;
-
-            SendPacket(replyPacket);
-        }
-    }
+   /* }*/
 
     // Starting positions
     for (int i = 0; i < N; i++)
@@ -233,21 +205,51 @@ int Client::Run()
 
     while (m_window.isOpen())
     {
+        if (m_isConnected)
+        {
+            //std::string userMessage;
+
+            //getline(std::cin, userMessage);
+
+            //std::cin >> userMessage;
+
+            // std::cin.getline()
+
+            //scanf_s("%[^\t\n]", userMessage.c_str());
+
+            /* if (userMessage == "exit")
+            {
+                m_Quit = true;
+            }*/
+
+            sf::Packet replyPacket;
+
+            CarData outData(m_username, "hello", m_speed, m_accelerate, m_decelerate);
+
+            // std::cout << outData.m_message << "\n\n";
+
+            std::cout << outData.m_speed << outData.m_accelerate << outData.m_decelerate << std::endl;
+
+            replyPacket << outData;
+
+            SendPacket(replyPacket);
+        }
+
         Events();
         Movement();
         Collision();
 
         m_window.clear(sf::Color::White);
 
-        m_BackgroundSprite.setPosition(-m_OffsetX, -m_OffsetY);
-        m_window.draw(m_BackgroundSprite);
+        m_backgroundSprite.setPosition(-m_offsetX, -m_offsetY);
+        m_window.draw(m_backgroundSprite);
         sf::Color colors[10] = { sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue, sf::Color::White };
         for (int i = 0; i < N; i++)
         {
-            m_CarSprite.setPosition(car[i].x - m_OffsetX, car[i].y - m_OffsetY);
-            m_CarSprite.setRotation(car[i].angle * 180 / 3.141593);
-            m_CarSprite.setColor(colors[i]);
-            m_window.draw(m_CarSprite);
+            m_carSprite.setPosition(car[i].x - m_offsetX, car[i].y - m_offsetY);
+            m_carSprite.setRotation(car[i].angle * 180 / 3.141593);
+            m_carSprite.setColor(colors[i]);
+            m_window.draw(m_carSprite);
         }
         m_window.display();
     }
@@ -287,53 +289,53 @@ void Client::Movement()
         Left = 1;
     }
     //car movement
-    if (Up && m_Speed < m_MaxSpeed)
+    if (Up && m_speed < m_maxSpeed)
     {
-		if (m_Speed < 0)
+		if (m_speed < 0)
 		{
-			m_Speed += m_Decelerate;
+			m_speed += m_decelerate;
 		}
 		else 
 		{
-			m_Speed += m_Accelerate;
+			m_speed += m_accelerate;
 		}
     }
-    if (Down && m_Speed > -m_MaxSpeed)
+    if (Down && m_speed > -m_maxSpeed)
     {
-		if (m_Speed > 0)
+		if (m_speed > 0)
 		{
-			m_Speed -= m_Decelerate;
+			m_speed -= m_decelerate;
 		}
 		else
 		{
-			m_Speed -= m_Accelerate;
+			m_speed -= m_accelerate;
 		}
     }
     if (!Up && !Down)
     {
-        if (m_Speed - m_Decelerate > 0)
+        if (m_speed - m_decelerate > 0)
         {
-            m_Speed -= m_Decelerate;
+            m_speed -= m_decelerate;
         }
-        else if (m_Speed + m_Decelerate < 0)
+        else if (m_speed + m_decelerate < 0)
         {
-            m_Speed += m_Decelerate;
+            m_speed += m_decelerate;
         }
         else
         {
-            m_Speed = 0;
+            m_speed = 0;
         }
     }
-    if (Right && m_Speed != 0)
+    if (Right && m_speed != 0)
     {
-        m_Angle += m_TurnSpeed * m_Speed / m_MaxSpeed;
+        m_angle += m_turnSpeed * m_speed / m_maxSpeed;
     }
-    if (Left && m_Speed != 0)
+    if (Left && m_speed != 0)
     {
-        m_Angle -= m_TurnSpeed * m_Speed / m_MaxSpeed;
+        m_angle -= m_turnSpeed * m_speed / m_maxSpeed;
     }
-    car[0].speed = m_Speed;
-    car[0].angle = m_Angle;
+    car[0].speed = m_speed;
+    car[0].angle = m_angle;
     for (int i = 0; i < N; i++)
     {
         car[i].move();
@@ -372,10 +374,10 @@ void Client::Collision()
     // TODO: Don't show white at bottom/right.
     if (car[0].x > 320)
     {
-        m_OffsetX = car[0].x - 320;
+        m_offsetX = car[0].x - 320;
     }
     if (car[0].y > 240)
     {
-        m_OffsetY = car[0].y - 240;
+        m_offsetY = car[0].y - 240;
     }
 }

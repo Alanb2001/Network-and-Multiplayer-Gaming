@@ -30,3 +30,8 @@ inline sf::Packet& operator >>(sf::Packet& packet, CarData& cardata)
 {
 	return packet >> cardata.m_username >> cardata.m_message >> cardata.m_speed >> cardata.m_accelerate >> cardata.m_decelerate;
 }
+
+inline std::ostream& operator <<(std::ostream& os, const sf::Vector2f& vec)
+{
+	return os << "(" << vec.x << ", " << vec.y << ")";
+}

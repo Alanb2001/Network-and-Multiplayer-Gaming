@@ -93,7 +93,7 @@ void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 			
 			packet >> inData;
 
-			std::cout << inData.m_username << ": " << inData.m_message << std::endl;
+			std::cout << inData.m_username << ": " << inData.m_message <<  inData.m_speed << inData.m_accelerate << inData.m_decelerate<<std::endl;
 
 			packet.clear();
 

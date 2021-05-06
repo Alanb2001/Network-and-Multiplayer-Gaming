@@ -20,27 +20,27 @@ public:
 	void Collision();
 
 private:
-	const unsigned short m_Port = 5000;
-	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
-	sf::TcpSocket m_Socket;
-	sf::Packet m_Packet;
-	sf::Mutex m_GlobalMutex;
-	bool m_IsConnected = false;
-	bool m_Quit = false;
-	std::string m_MessageSend;
-	std::string m_Username;
+	const unsigned short m_port = 5000;
+	sf::IpAddress m_address = sf::IpAddress::getLocalAddress();
+	sf::TcpSocket m_socket;
+	sf::Packet m_packet;
+	sf::Mutex m_globalMutex;
+	bool m_isConnected = false;
+	bool m_quit = false;
+	std::string m_messageSend;
+	std::string m_username;
 	sf::RenderWindow m_window;
-	sf::Texture m_BackgroundTexture;
-	sf::Texture m_CarTexture;
-	sf::Sprite m_BackgroundSprite;
-	sf::Sprite m_CarSprite;
-	float m_Speed;
-	float m_Angle;
-	float m_MaxSpeed;
-	float m_Accelerate;
-	float m_Decelerate;
-	float m_TurnSpeed;
-	int m_OffsetX;
-	int m_OffsetY;
+	sf::Texture m_backgroundTexture;
+	sf::Texture m_carTexture;
+	sf::Sprite m_backgroundSprite;
+	sf::Sprite m_carSprite;
+	float m_speed;
+	float m_angle;
+	float m_maxSpeed;
+	float m_accelerate;
+	float m_decelerate;
+	float m_turnSpeed;
+	int m_offsetX;
+	int m_offsetY;
 };
 
