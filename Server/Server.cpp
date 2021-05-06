@@ -15,13 +15,13 @@ void Server::BroadcastPacket(sf::Packet& packet, sf::IpAddress address, unsigned
 	for (size_t iterator = 0; iterator < m_Clients.size(); iterator++)
 	{
 		sf::TcpSocket* client = m_Clients[iterator];
-		if (client->getRemoteAddress() != m_Address || client->getLocalPort() != m_Port)
-		{
+		//if (client->getRemoteAddress() != m_Address || client->getLocalPort() != m_Port)
+		//{
 			if (client->send(packet) != sf::Socket::Done)
 			{
 				std::cout << "Could not send packet on broadcast" << std::endl;
 			}
-		}
+		//}
 	}
 	//std::cout << "Checking if there's any new messages..." << std::endl;
 	//std::string oldMessage;
@@ -85,14 +85,24 @@ void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 	{
 		if (packet.getDataSize() > 0)
 		{
-			std::string receivedMessage;
-			packet >> receivedMessage;
+			//std::string receivedMessage;
+			
+			CarData inData;
+			
+			//packet >> receivedMessage;
+			
+			packet >> inData;
+
+			std::cout << inData.m_username << ": " << inData.m_message << std::endl;
+
 			packet.clear();
 
-			packet << receivedMessage << client->getRemoteAddress().toString() << client->getRemotePort();
+			// packet << receivedMessage << client->getRemoteAddress().toString() << client->getRemotePort();
+
+			// Push the received data out to all the other clients
+			packet << inData;
 
 			BroadcastPacket(packet, client->getRemoteAddress(), client->getRemotePort());
-			std::cout << client->getRemoteAddress().toString() << ":" << client->getRemotePort() << " '" << receivedMessage << "'" << std::endl;
 		}
 	}
 }

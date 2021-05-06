@@ -4,6 +4,7 @@
 #include <vector>
 #include <chrono>
 #include <thread>
+#include "..//NAMG/SharedData.h"
 
 class Server
 {

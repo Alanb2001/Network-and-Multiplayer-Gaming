@@ -55,8 +55,8 @@ Client::Client()
     m_Speed(0),
     m_Angle(0),
     m_MaxSpeed(12.0),
-    m_Acc(0.2),
-    m_Dec(0.3),
+    m_Accelerate(0.2),
+    m_Decelerate(0.3),
     m_TurnSpeed(0.08),
     m_OffsetX(0),
     m_OffsetY(0)
@@ -74,6 +74,13 @@ Client::Client()
     m_CarTexture.setSmooth(true);
     m_CarSprite.setTexture(m_CarTexture);
     m_CarSprite.setOrigin(22, 22);
+
+
+
+	std::cout << "Enter a username: ";
+
+	std::cin >> m_Username;
+
 }
 
 void Client::ReceivePackets(sf::TcpSocket* socket)
@@ -104,13 +111,19 @@ void Client::ReceivePackets(sf::TcpSocket* socket)
 
 	while (true)
 	{
+		// m_Packet.clear();
 		if (socket->receive(m_Packet) == sf::Socket::Done)
 		{
-            std::string receviedString;
-            std::string senderAddress;
-            unsigned short senderPort;
-            m_Packet >> receviedString >> senderAddress >> senderPort;
-			std::cout << "From (" << senderAddress << ":" << senderPort << "): " << receviedString <<std::endl;
+            //std::string receviedString;
+            //std::string senderAddress;
+            //unsigned short senderPort;
+            //m_Packet >> receviedString >> senderAddress >> senderPort;
+
+			CarData inCarData;
+			m_Packet >> inCarData; // TODO: Remove the member packet - create local packets to send out
+
+			// std::cout << "From (" << senderAddress << ":" << senderPort << "): " << receviedString <<std::endl;
+			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_message << std::endl;
 		}
 
         std::this_thread::sleep_for((std::chrono::milliseconds)100);
@@ -183,13 +196,28 @@ int Client::Run()
         if (m_IsConnected)
         {
             std::string userMessage;
-            getline(std::cin, userMessage);
+            
+			getline(std::cin, userMessage);
+
+			//std::cin >> userMessage;
+
+			// std::cin.getline()
+
+			//scanf_s("%[^\t\n]", userMessage.c_str());
+
             if (userMessage == "exit")
 	        {
 		        m_Quit = true;
 	        }
+
+
             sf::Packet replyPacket;
-            replyPacket << userMessage;
+
+			CarData outData(m_Username, userMessage, 123, 76839, 7238913);
+
+			// std::cout << outData.m_message << "\n\n";
+
+            replyPacket << outData;
 
             SendPacket(replyPacket);
         }
@@ -261,23 +289,35 @@ void Client::Movement()
     //car movement
     if (Up && m_Speed < m_MaxSpeed)
     {
-        if (m_Speed < 0)  m_Speed += m_Dec;
-        else  m_Speed += m_Acc;
+		if (m_Speed < 0)
+		{
+			m_Speed += m_Decelerate;
+		}
+		else 
+		{
+			m_Speed += m_Accelerate;
+		}
     }
     if (Down && m_Speed > -m_MaxSpeed)
     {
-        if (m_Speed > 0) m_Speed -= m_Dec;
-        else  m_Speed -= m_Acc;
+		if (m_Speed > 0)
+		{
+			m_Speed -= m_Decelerate;
+		}
+		else
+		{
+			m_Speed -= m_Accelerate;
+		}
     }
     if (!Up && !Down)
     {
-        if (m_Speed - m_Dec > 0)
+        if (m_Speed - m_Decelerate > 0)
         {
-            m_Speed -= m_Dec;
+            m_Speed -= m_Decelerate;
         }
-        else if (m_Speed + m_Dec < 0)
+        else if (m_Speed + m_Decelerate < 0)
         {
-            m_Speed += m_Dec;
+            m_Speed += m_Decelerate;
         }
         else
         {

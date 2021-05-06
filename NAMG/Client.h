@@ -4,6 +4,7 @@
 #include <chrono>
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
+#include "SharedData.h"
 
 class Client
 {
@@ -27,6 +28,7 @@ private:
 	bool m_IsConnected = false;
 	bool m_Quit = false;
 	std::string m_MessageSend;
+	std::string m_Username;
 	sf::RenderWindow m_window;
 	sf::Texture m_BackgroundTexture;
 	sf::Texture m_CarTexture;
@@ -35,8 +37,8 @@ private:
 	float m_Speed;
 	float m_Angle;
 	float m_MaxSpeed;
-	float m_Acc;
-	float m_Dec;
+	float m_Accelerate;
+	float m_Decelerate;
 	float m_TurnSpeed;
 	int m_OffsetX;
 	int m_OffsetY;
