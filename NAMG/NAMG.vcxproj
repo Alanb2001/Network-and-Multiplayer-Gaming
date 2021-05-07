@@ -151,11 +151,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Car.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientMain.cpp" />
     <ClCompile Include="FPS.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Car.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="FPS.h" />
     <ClInclude Include="SharedData.h" />

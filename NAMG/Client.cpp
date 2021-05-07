@@ -1,79 +1,23 @@
 #include "Client.h"
-#include <SFML/Main.hpp>
 
-const int num = 8; //checkpoints
-// TODO: use checkpoint to make sure we are on the track.
-// Slow speed when not on the track.
-int points[num][2] = { 300, 610,
-  1270,430,
-  1380,2380,
-  1900,2460,
-  1970,1700,
-  2550,1680,
-  2560,3150,
-  500, 3300 };
-
-struct Car
-{
-	sf::Vector2f position;
-	float speed;
-	float angle;
-	int n;
-	Car() :
-		speed(2.f),
-		angle(0.f),
-		n(0),
-		position
-		(0.f, 0.f)
-	{
-
-	}
-
-	void move()
-	{
-		position.x += sin(angle) * speed;
-		position.y -= cos(angle) * speed;
-	}
-	void findTarget()
-	{
-		float tx = points[n][0];
-		float ty = points[n][1];
-		float beta = angle - atan2(tx - position.x, -ty + position.y);
-		if (sin(beta) < 0)
-		{
-			angle += 0.005 * speed;
-		}
-		else
-		{
-			angle -= 0.005 * speed;
-		}
-		// Check if passed a checkpoint
-		if ((position.x - tx) * (position.x - tx) + (position.y - ty) * (position.y - ty) < 25 * 25)
-		{
-			n = (n + 1) % num; // TODO: simplify
-		}
-	}
-};
-
-float R = 22;
 const int N = 5;
-Car car[N];
 
-Client::Client()
-	: m_window(sf::VideoMode(640, 480), "NAMG", sf::Style::Default),
+Client::Client() : 
+	m_window(sf::VideoMode(640, 480), "NAMG", sf::Style::Default),
 	m_backgroundTexture(),
 	m_carTexture(),
 	m_backgroundSprite(),
 	m_carSprite(),
-	m_speed(0),
-	m_angle(0),
-	m_maxSpeed(12.0),
-	m_accelerate(0.2),
-	m_decelerate(0.3),
-	m_turnSpeed(0.08),
+	m_speed(0.f),
+	m_angle(0.f),
+	m_maxSpeed(12.0f),
+	m_accelerate(0.2f),
+	m_decelerate(0.3f),
+	m_turnSpeed(0.08f),
 	m_offsetX(0),
 	m_offsetY(0),
-	m_packetTimer(1.f)
+	m_packetTimer(1.f),
+	m_timeElapsed(0.f)
 {
 	std::cout << "Chat client started" << std::endl;
 
@@ -92,6 +36,11 @@ Client::Client()
 	std::cout << "Enter a username: ";
 
 	std::cin >> m_username;
+
+	m_carContainer.reserve(N);
+	for (int i = 0; i < N; ++i) {
+		m_carContainer.emplace_back();
+	}
 
 }
 
@@ -151,9 +100,9 @@ int Client::Run()
 	// Starting positions
 	for (int i = 0; i < N; i++)
 	{
-		car[i].position.x = 300 + i * 50;
-		car[i].position.y = 1700 + i * 80;
-		car[i].speed = 7 + i;
+		m_carContainer[i].position.x = 300 + i * 50;
+		m_carContainer[i].position.y = 1700 + i * 80;
+		m_carContainer[i].speed = 7 + i;
 	}
 
 	sf::Clock clock;
@@ -171,7 +120,7 @@ int Client::Run()
 
 			sf::Packet replyPacket;
 
-			CarData outData(m_username, "hello", m_speed, m_accelerate, m_decelerate, car[0].position);
+			CarData outData(m_username, "hello", m_speed, m_accelerate, m_decelerate, m_carContainer[0].position);
 
 			replyPacket << outData;
 
@@ -189,8 +138,8 @@ int Client::Run()
 		sf::Color colors[10] = { sf::Color::Red, sf::Color::Green, sf::Color::Magenta, sf::Color::Blue, sf::Color::White };
 		for (int i = 0; i < N; i++)
 		{
-			m_carSprite.setPosition(car[i].position.x - m_offsetX, car[i].position.y - m_offsetY);
-			m_carSprite.setRotation(car[i].angle * 180 / 3.141593);
+			m_carSprite.setPosition(m_carContainer[i].position.x - m_offsetX, m_carContainer[i].position.y - m_offsetY);
+			m_carSprite.setRotation(m_carContainer[i].angle * 180 / 3.141593f);
 			m_carSprite.setColor(colors[i]);
 			m_window.draw(m_carSprite);
 		}
@@ -277,20 +226,22 @@ void Client::Movement()
 	{
 		m_angle -= m_turnSpeed * m_speed / m_maxSpeed;
 	}
-	car[0].speed = m_speed;
-	car[0].angle = m_angle;
+	m_carContainer[0].speed = m_speed;
+	m_carContainer[0].angle = m_angle;
 	for (int i = 0; i < N; i++)
 	{
-		car[i].move();
+		m_carContainer[i].move();
 	}
 	for (int i = 1; i < N; i++)
 	{
-		car[i].findTarget();
+		m_carContainer[i].findTarget();
 	}
 }
 
 void Client::Collision()
 {
+	float R = 22;
+
 	//collision
 	for (int i = 0; i < N; i++)
 	{
@@ -302,12 +253,12 @@ void Client::Collision()
 			int dx = 0, dy = 0;
 			while (dx * dx + dy * dy < 4 * R * R)
 			{
-				car[i].position.x += dx / 10.0;
-				car[i].position.x += dy / 10.0;
-				car[j].position.x -= dx / 10.0;
-				car[j].position.y -= dy / 10.0;
-				dx = car[i].position.x - car[j].position.x;
-				dy = car[i].position.y - car[j].position.y;
+				m_carContainer[i].position.x += dx / 10.0f;
+				m_carContainer[i].position.x += dy / 10.0f;
+				m_carContainer[j].position.x -= dx / 10.0f;
+				m_carContainer[j].position.y -= dy / 10.0f;
+				dx = m_carContainer[i].position.x - m_carContainer[j].position.x;
+				dy = m_carContainer[i].position.y - m_carContainer[j].position.y;
 				if (!dx && !dy) break;
 			}
 		}
@@ -315,12 +266,12 @@ void Client::Collision()
 
 	// TODO: Stay within the limit of the map.
 	// TODO: Don't show white at bottom/right.
-	if (car[0].position.x > 320)
+	if (m_carContainer[0].position.x > 320)
 	{
-		m_offsetX = car[0].position.x - 320;
+		m_offsetX = m_carContainer[0].position.x - 320;
 	}
-	if (car[0].position.y > 240)
+	if (m_carContainer[0].position.y > 240)
 	{
-		m_offsetY = car[0].position.y - 240;
+		m_offsetY = m_carContainer[0].position.y - 240;
 	}
 }

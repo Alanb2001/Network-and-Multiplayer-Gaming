@@ -1,11 +1,13 @@
 #pragma once
 #include <iostream>
 #include <thread>
-#include <chrono>
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
+#include <vector>
+
 #include "SharedData.h"
 #include "FPS.h"
+#include "Car.h"
 
 class Client
 {
@@ -46,5 +48,6 @@ private:
 	sf::Clock m_clock;
 	float m_packetTimer;
 	float m_timeElapsed;
+	std::vector<Car> m_carContainer;
 };
 

@@ -15,7 +15,8 @@ void Server::BroadcastPacket(sf::TcpSocket* sender, sf::Packet& packet, sf::IpAd
 	for (size_t iterator = 0; iterator < m_Clients.size(); iterator++)
 	{
 		sf::TcpSocket* client = m_Clients[iterator];
-		if (client != sender) {
+		if (client != sender) 
+		{
 			if (client->send(packet) != sf::Socket::Done)
 			{
 				std::cout << "Could not send packet on broadcast" << std::endl;

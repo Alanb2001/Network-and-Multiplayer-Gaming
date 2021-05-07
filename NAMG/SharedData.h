@@ -1,6 +1,14 @@
 #pragma once
 #include <SFML/Network.hpp>
 
+enum class DataPackets
+{
+	Connect,
+	Disconnect,
+	GameStart,
+	Car
+};
+
 struct CarData
 {
 	CarData() = default;
