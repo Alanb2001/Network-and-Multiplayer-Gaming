@@ -14,7 +14,6 @@ public:
 	void ReceivePacket(sf::TcpSocket* client, size_t iterator);
 	void ConnectClients(std::vector<sf::TcpSocket*>* client);
 	void DisconnectClient(sf::TcpSocket* socket, size_t position);
-	//void GetInput();
 	void ManagePackets();
 	int Run();
 

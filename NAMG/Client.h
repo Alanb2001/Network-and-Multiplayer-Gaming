@@ -14,7 +14,6 @@ public:
 	void ReceivePackets(sf::TcpSocket* socket);
 	void SendPacket(sf::Packet& packet);
 	bool GameClient();
-	//void GetInput();
 	int Run();
 	void Events();
 	void Movement();

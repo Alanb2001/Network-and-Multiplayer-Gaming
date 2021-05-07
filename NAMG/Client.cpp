@@ -97,49 +97,16 @@ Client::Client()
 
 void Client::ReceivePackets(sf::TcpSocket* socket)
 {
-	//std::string oldMessage;
-	///*while (!m_Quit)
-	//{*/
-	//sf::Packet packetSend;
-	////m_GlobalMutex.lock();
-	//packetSend << m_MessageSend;
-	////m_GlobalMutex.unlock();
-
-	//if (m_Socket.send(packetSend) != sf::Socket::Done)
-	//{
-	//    std::cout << "Error" << std::endl;
-	//}
-
-	//std::string message;
-	//sf::Packet packetReceive;
-
-	//m_Socket.receive(packetReceive);
-	//if ((packetReceive >> message) && oldMessage != message && !message.empty())
-	//{
-	//    std::cout << message << std::endl;
-	//    oldMessage = message;
-	//}
-	///*}*/
-
 	while (true)
 	{
 		sf::Packet packet;
-		// m_Packet.clear();
 		if (socket->receive(packet) == sf::Socket::Done)
 		{
-			//std::string receviedString;
-			//std::string senderAddress;
-			//unsigned short senderPort;
-			//m_Packet >> receviedString >> senderAddress >> senderPort;
-
 			CarData inCarData;
 			packet >> inCarData;
 
-			// std::cout << "From (" << senderAddress << ":" << senderPort << "): " << receviedString <<std::endl;
-			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_postion << std::endl;
+			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_position << std::endl;
 		}
-
-		// std::this_thread::sleep_for((std::chrono::milliseconds)100);
 	}
 }
 
@@ -174,45 +141,9 @@ bool Client::GameClient()
 	return false;
 }
 
-//void Client::GetInput()
-//{
-//  std::string userMessage;
-//	std::cout << "\nEnter \"exit\" to quit or message to send: ";
-//	getline(std::cin, userMessage);
-//	if (userMessage == "exit")
-//	{
-//		m_Quit = true;
-//	}
-//	//m_GlobalMutex.lock();
-//	m_MessageSend = userMessage;
-//	//m_GlobalMutex.unlock();
-//}
 
 int Client::Run()
 {
-	//   //sf::Thread* thread = 0;
-
-	   ////thread = new sf::Thread(&Client::Messages, this);
-	   ////thread->launch();
-
-	   //while (!m_Quit)
-	   //{
-	   //	//GameClient();
-	   //	Messages();
-	   //	GetInput();
-	   //}
-
-	   //if (thread)
-	   //{
-	   //	thread->wait();
-	   //	delete thread;
-	   //}
-
-	  /* while (!m_Quit)
-	   {*/
-
-	   /* }*/
-
 	GameClient();
 
 	std::thread receptionThread(&Client::ReceivePackets, this, &m_socket);
@@ -237,28 +168,10 @@ int Client::Run()
 
 		if (m_isConnected)
 		{
-			//std::string userMessage;
-
-			//getline(std::cin, userMessage);
-
-			//std::cin >> userMessage;
-
-			// std::cin.getline()
-
-			//scanf_s("%[^\t\n]", userMessage.c_str());
-
-			/* if (userMessage == "exit")
-			{
-				m_Quit = true;
-			}*/
 
 			sf::Packet replyPacket;
 
 			CarData outData(m_username, "hello", m_speed, m_accelerate, m_decelerate, car[0].position);
-
-			// std::cout << outData.m_message << "\n\n";
-
-			// std::cout << /*outData.m_speed << " " << outData.m_accelerate << " " << outData.m_decelerate << " " << */ outData.m_postion << std::endl;
 
 			replyPacket << outData;
 
