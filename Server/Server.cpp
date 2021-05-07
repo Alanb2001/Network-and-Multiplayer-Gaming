@@ -10,17 +10,19 @@ Server::Server()
 	}
 }
 
-void Server::BroadcastPacket(sf::Packet& packet, sf::IpAddress address, unsigned short port)
+void Server::BroadcastPacket(sf::TcpSocket* sender, sf::Packet& packet, sf::IpAddress address, unsigned short port)
 {
 	for (size_t iterator = 0; iterator < m_Clients.size(); iterator++)
 	{
 		sf::TcpSocket* client = m_Clients[iterator];
 		//if (client->getRemoteAddress() != m_Address || client->getLocalPort() != m_Port)
 		//{
+		if (client != sender) {
 			if (client->send(packet) != sf::Socket::Done)
 			{
 				std::cout << "Could not send packet on broadcast" << std::endl;
 			}
+		}
 		//}
 	}
 	//std::cout << "Checking if there's any new messages..." << std::endl;
@@ -93,7 +95,7 @@ void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 			
 			packet >> inData;
 
-			std::cout << inData.m_username << ": " << inData.m_message <<  inData.m_speed << inData.m_accelerate << inData.m_decelerate<<std::endl;
+			std::cout << inData.m_username << ": " << /*inData.m_message <<  " " << inData.m_speed << " " << inData.m_accelerate << " " << inData.m_decelerate*/ inData.m_postion << std::endl;
 
 			packet.clear();
 
@@ -102,7 +104,7 @@ void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 			// Push the received data out to all the other clients
 			packet << inData;
 
-			BroadcastPacket(packet, client->getRemoteAddress(), client->getRemotePort());
+			BroadcastPacket(client, packet, client->getRemoteAddress(), client->getRemotePort());
 		}
 	}
 }
@@ -199,7 +201,7 @@ void Server::ManagePackets()
 		{
 			ReceivePacket(m_Clients[iterator], iterator);
 		}
-		std::this_thread::sleep_for((std::chrono::milliseconds)100);
+		// std::this_thread::sleep_for((std::chrono::milliseconds)100);
 	}
 }
 

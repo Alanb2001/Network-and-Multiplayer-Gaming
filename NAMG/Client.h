@@ -5,6 +5,7 @@
 #include <SFML/Network.hpp>
 #include <SFML/Graphics.hpp>
 #include "SharedData.h"
+#include "FPS.h"
 
 class Client
 {
@@ -42,5 +43,9 @@ private:
 	float m_turnSpeed;
 	int m_offsetX;
 	int m_offsetY;
+	FPS m_fpsCounter;
+	sf::Clock m_clock;
+	float m_packetTimer;
+	float m_timeElapsed;
 };
 

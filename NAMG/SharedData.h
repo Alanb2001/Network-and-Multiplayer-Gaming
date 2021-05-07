@@ -5,12 +5,13 @@ struct CarData
 {
 	CarData() = default;
 
-	CarData(const std::string& username, const std::string& message, float speed, float acc, float dec) : 
+	CarData(const std::string& username, const std::string& message, float speed, float acc, float dec, sf::Vector2f& posXY) : 
 		m_username(username),
 		m_message(message),
 		m_speed(speed),
 		m_accelerate(acc),
-		m_decelerate(dec)
+		m_decelerate(dec),
+		m_postion(posXY)
 	{
 	}
 
@@ -19,16 +20,17 @@ struct CarData
 	float m_speed;
 	float m_accelerate;
 	float m_decelerate;
+	sf::Vector2f m_postion;
 };
 
 inline sf::Packet& operator <<(sf::Packet& packet, const CarData& cardata)
 {
-	return packet << cardata.m_username << cardata.m_message << cardata.m_speed << cardata.m_accelerate << cardata.m_decelerate;
+	return packet << cardata.m_username << cardata.m_message << cardata.m_speed << cardata.m_accelerate << cardata.m_decelerate << cardata.m_postion.x << cardata.m_postion.y;
 }
 
 inline sf::Packet& operator >>(sf::Packet& packet, CarData& cardata)
 {
-	return packet >> cardata.m_username >> cardata.m_message >> cardata.m_speed >> cardata.m_accelerate >> cardata.m_decelerate;
+	return packet >> cardata.m_username >> cardata.m_message >> cardata.m_speed >> cardata.m_accelerate >> cardata.m_decelerate >> cardata.m_postion.x >> cardata.m_postion.y;
 }
 
 inline std::ostream& operator <<(std::ostream& os, const sf::Vector2f& vec)

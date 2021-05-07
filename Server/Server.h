@@ -10,7 +10,7 @@ class Server
 {
 public:
 	Server();
-	void BroadcastPacket(sf::Packet& packet, sf::IpAddress address, unsigned short port);
+	void BroadcastPacket(sf::TcpSocket* sender, sf::Packet& packet, sf::IpAddress address, unsigned short port);
 	void ReceivePacket(sf::TcpSocket* client, size_t iterator);
 	void ConnectClients(std::vector<sf::TcpSocket*>* client);
 	void DisconnectClient(sf::TcpSocket* socket, size_t position);
