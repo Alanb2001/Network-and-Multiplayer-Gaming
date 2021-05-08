@@ -40,7 +40,7 @@ void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 				
 			packet >> inData;
 
-			std::cout << inData.m_username << ": " << inData.m_position << std::endl;
+			std::cout << inData.m_username << ": " << inData.m_angle << inData.m_position << std::endl;
 
 			packet.clear();
 

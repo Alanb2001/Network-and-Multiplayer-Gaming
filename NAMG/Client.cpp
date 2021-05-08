@@ -46,16 +46,30 @@ Client::Client() :
 
 void Client::ReceivePackets(sf::TcpSocket* socket)
 {
+	CarData inCarData;
 	while (true)
 	{
 		sf::Packet packet;
 		if (socket->receive(packet) == sf::Socket::Done)
 		{
-			CarData inCarData;
 			packet >> inCarData;
 
-			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_position << std::endl;
+			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_angle << inCarData.m_position  << std::endl;
 		}
+	}
+
+	switch (inCarData.m_type)
+	{
+	case eDataPackets::e_None:
+		break;
+	case eDataPackets::e_Connect:
+		break;
+	case eDataPackets::e_GameStart:
+		break;
+	case eDataPackets::e_Disconnect:
+		break;
+	default:
+		break;
 	}
 }
 
@@ -63,7 +77,8 @@ void Client::SendPacket(sf::Packet& packet)
 {
 	m_timeElapsed += m_clock.getElapsedTime().asSeconds();
 
-	if (m_timeElapsed >= m_packetTimer) {
+	if (m_timeElapsed >= m_packetTimer) 
+	{
 		if (packet.getDataSize() > 0 && m_socket.send(packet) != sf::Socket::Done)
 		{
 			std::cout << "Could not send packet" << std::endl;
@@ -120,7 +135,7 @@ int Client::Run()
 
 			sf::Packet replyPacket;
 
-			CarData outData(m_username, "hello", m_speed, m_accelerate, m_decelerate, m_carContainer[0].position);
+			CarData outData(eDataPackets::e_Connect, m_username, "hello", m_angle, m_carContainer[0].position);
 
 			replyPacket << outData;
 
@@ -247,7 +262,8 @@ void Client::Collision()
 	{
 		for (int j = 0; j < N; j++)
 		{
-			if (i == j) {
+			if (i == j) 
+			{
 				break;
 			}
 			int dx = 0, dy = 0;
@@ -259,7 +275,10 @@ void Client::Collision()
 				m_carContainer[j].position.y -= dy / 10.0f;
 				dx = m_carContainer[i].position.x - m_carContainer[j].position.x;
 				dy = m_carContainer[i].position.y - m_carContainer[j].position.y;
-				if (!dx && !dy) break;
+				if (!dx && !dy)
+				{
+					break;
+				}
 			}
 		}
 	}
