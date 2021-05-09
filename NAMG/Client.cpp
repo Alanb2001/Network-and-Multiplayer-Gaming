@@ -125,17 +125,15 @@ int Client::Run()
 
 	while (m_window.isOpen())
 	{
-
 		m_fpsCounter.update();
 
 		m_window.setTitle("Racing Game: " + std::to_string(m_fpsCounter.getFPS()));
 
 		if (m_isConnected)
 		{
-
 			sf::Packet replyPacket;
 
-			CarData outData(eDataPackets::e_Connect, m_username, "hello", m_angle, m_carContainer[0].position);
+			CarData outData(eDataPackets::e_GameStart, m_username, m_angle, m_carContainer[0].position);
 
 			replyPacket << outData;
 

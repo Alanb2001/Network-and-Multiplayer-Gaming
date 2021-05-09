@@ -3,7 +3,18 @@
 #include <SFML/Network.hpp>
 #include <vector>
 #include <thread>
+
 #include "..//NAMG/SharedData.h"
+
+struct Client
+{
+	Client(const sf::Vector2f& position, const float angle);
+
+	std::string m_userName;
+	float m_angle;
+	sf::Vector2f m_position;
+
+};
 
 class Server
 {

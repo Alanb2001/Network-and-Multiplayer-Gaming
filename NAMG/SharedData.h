@@ -33,29 +33,27 @@ struct CarData
 {
 	CarData() = default;
 
-	CarData(const eDataPackets type, const std::string& username, const std::string& message, float angle, sf::Vector2f& posXY) : 
+	CarData(const eDataPackets type, const std::string& username, float angle, sf::Vector2f& posXY) : 
 		m_type(type),
 		m_username(username),
-		m_message(message),
 		m_angle(angle),
 		m_position(posXY)
 	{
 	}
 	eDataPackets m_type;
 	std::string m_username;
-	std::string m_message;
 	float m_angle;
 	sf::Vector2f m_position;
 };
 
 inline sf::Packet& operator <<(sf::Packet& packet, const CarData& cardata)
 {
-	return packet << cardata.m_type << cardata.m_username << cardata.m_message << cardata.m_angle << cardata.m_position.x << cardata.m_position.y;
+	return packet << cardata.m_type << cardata.m_username << cardata.m_angle << cardata.m_position.x << cardata.m_position.y;
 }
 
 inline sf::Packet& operator >>(sf::Packet& packet, CarData& cardata)
 {
-	return packet >> cardata.m_type >> cardata.m_username >> cardata.m_message >> cardata.m_angle >> cardata.m_position.x >> cardata.m_position.y;
+	return packet >> cardata.m_type >> cardata.m_username >> cardata.m_angle >> cardata.m_position.x >> cardata.m_position.y;
 }
 
 inline std::ostream& operator <<(std::ostream& os, const sf::Vector2f& vec)

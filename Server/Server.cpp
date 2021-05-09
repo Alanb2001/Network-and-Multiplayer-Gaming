@@ -1,5 +1,12 @@
 #include "Server.h"
 
+Client::Client(const sf::Vector2f& position, const float angle) :
+	m_angle(angle),
+	m_position(position)
+{
+
+}
+
 Server::Server()
 {
 	std::cout << "Chat server started" << std::endl;
