@@ -38,23 +38,24 @@ Client::Client() :
 	std::cin >> m_username;
 
 	m_carContainer.reserve(N);
-	for (int i = 0; i < N; ++i) {
+	for (int i = 0; i < N; ++i) 
+	{
 		m_carContainer.emplace_back();
 	}
-
 }
 
 void Client::ReceivePackets(sf::TcpSocket* socket)
 {
 	CarData inCarData;
+	sf::Packet packet;
 	while (true)
 	{
-		sf::Packet packet;
 		if (socket->receive(packet) == sf::Socket::Done)
 		{
 			packet >> inCarData;
 
-			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_angle << inCarData.m_position  << std::endl;
+			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_angle << inCarData.m_position << std::endl;
+
 		}
 	}
 
@@ -133,7 +134,7 @@ int Client::Run()
 		{
 			sf::Packet replyPacket;
 
-			CarData outData(eDataPackets::e_GameStart, m_username, m_angle, m_carContainer[0].position);
+			CarData outData(eDataPackets::e_GameStart, m_username, m_carContainer[0].angle, m_carContainer[0].position);
 
 			replyPacket << outData;
 

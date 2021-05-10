@@ -4,7 +4,6 @@ Client::Client(const sf::Vector2f& position, const float angle) :
 	m_angle(angle),
 	m_position(position)
 {
-
 }
 
 Server::Server()
