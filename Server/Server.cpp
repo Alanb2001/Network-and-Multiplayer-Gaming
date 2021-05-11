@@ -31,9 +31,28 @@ void Server::BroadcastPacket(sf::TcpSocket* sender, sf::Packet& packet, sf::IpAd
 	}
 }
 
+void Server::BroadcastPacket(sf::TcpSocket* sender, CarData& cardata)
+{
+	sf::Packet packet;
+	packet << cardata;
+	for (size_t iterator = 0; iterator < m_Clients.size(); iterator++)
+	{
+		sf::TcpSocket* client = m_Clients[iterator];
+		if (client != sender)
+		{
+			if (client->send(packet) != sf::Socket::Done)
+			{
+				std::cout << "Could not send packet on broadcast" << std::endl;
+			}
+		}
+	}
+
+}
+
 void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 {
 	sf::Packet packet;
+
 	if (client->receive(packet) == sf::Socket::Disconnected)
 	{
 		DisconnectClient(client, iterator);
@@ -67,6 +86,18 @@ void Server::ConnectClients(std::vector<sf::TcpSocket*>* client)
 			newClient->setBlocking(false);
 			client->push_back(newClient);
 			std::cout << "Added client " << newClient->getRemoteAddress() << " on slot " << client->size() << std::endl;
+
+			CarData cd(eDataPackets::e_Car);
+
+			sf::Packet packet;
+
+			packet << cd;
+
+			// Update the client that they have 
+
+			std::cout << cd.m_username << std::endl;
+
+			newClient->send(packet);
 		}
 		else
 		{

@@ -33,6 +33,14 @@ struct CarData
 {
 	CarData() = default;
 
+	CarData(const eDataPackets type) : 
+		m_type(type),
+		m_username(""),
+		m_angle(0.f),
+		m_position()
+	{
+	}
+	
 	CarData(const eDataPackets type, const std::string& username, float angle, sf::Vector2f& posXY) : 
 		m_type(type),
 		m_username(username),

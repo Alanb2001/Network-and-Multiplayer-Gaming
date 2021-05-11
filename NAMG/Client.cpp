@@ -139,6 +139,7 @@ int Client::Run()
 			replyPacket << outData;
 
 			SendPacket(replyPacket);
+
 		}
 
 		Events();
