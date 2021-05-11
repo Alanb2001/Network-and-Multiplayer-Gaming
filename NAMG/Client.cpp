@@ -106,7 +106,8 @@ bool Client::GameClient()
 	return false;
 }
 
-
+/* This function runs all the game code in the while loop, it also sends packets out to the server
+	and also receive packets back from the server using a thread*/
 int Client::Run()
 {
 	GameClient();

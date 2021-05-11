@@ -127,6 +127,9 @@ void Server::ManagePackets()
 	}
 }
 
+/* This function checks if any clients are trying to connect on a separate
+	thread as well as going through each client to see if the server is 
+	receiving any packets	*/
 int Server::Run()
 {
 	std::thread connectionThread(&Server::ConnectClients, this, &m_Clients);
