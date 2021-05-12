@@ -92,12 +92,16 @@ void Server::ConnectClients(std::vector<sf::TcpSocket*>* client)
 			sf::Packet packet;
 
 			packet << cd;
-
+			
 			// Update the client that they have 
 
-			std::cout << cd.m_username << std::endl;
+			std::cout << cd.m_username << std::endl;    
 
 			newClient->send(packet);
+
+
+
+	     		
 		}
 		else
 		{
