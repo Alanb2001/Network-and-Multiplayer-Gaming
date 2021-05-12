@@ -29,9 +29,6 @@
     <ClInclude Include="SharedData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FPS.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Car.h">
       <Filter>Header Files</Filter>
     </ClInclude>

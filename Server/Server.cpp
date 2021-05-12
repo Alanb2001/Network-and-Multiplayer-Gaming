@@ -1,14 +1,8 @@
 #include "Server.h"
 
-Client::Client(const sf::Vector2f& position, const float angle) :
-	m_angle(angle),
-	m_position(position)
-{
-}
-
 Server::Server()
 {
-	std::cout << "Chat server started" << std::endl;
+	std::cout << "Server started" << std::endl;
 
 	if (m_Listener.listen(m_Port) != sf::Socket::Done)
 	{
@@ -29,24 +23,6 @@ void Server::BroadcastPacket(sf::TcpSocket* sender, sf::Packet& packet, sf::IpAd
 			}
 		}
 	}
-}
-
-void Server::BroadcastPacket(sf::TcpSocket* sender, CarData& cardata)
-{
-	sf::Packet packet;
-	packet << cardata;
-	for (size_t iterator = 0; iterator < m_Clients.size(); iterator++)
-	{
-		sf::TcpSocket* client = m_Clients[iterator];
-		if (client != sender)
-		{
-			if (client->send(packet) != sf::Socket::Done)
-			{
-				std::cout << "Could not send packet on broadcast" << std::endl;
-			}
-		}
-	}
-
 }
 
 void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
@@ -86,21 +62,6 @@ void Server::ConnectClients(std::vector<sf::TcpSocket*>* client)
 			newClient->setBlocking(false);
 			client->push_back(newClient);
 			std::cout << "Added client " << newClient->getRemoteAddress() << " on slot " << client->size() << std::endl;
-
-			CarData cd(eDataPackets::e_Car);
-
-			sf::Packet packet;
-
-			packet << cd;
-			
-			// Update the client that they have 
-
-			std::cout << cd.m_username << std::endl;    
-
-			newClient->send(packet);
-
-
-
 	     		
 		}
 		else
@@ -134,11 +95,9 @@ void Server::ManagePackets()
 /* This function checks if any clients are trying to connect on a separate
 	thread as well as going through each client to see if the server is 
 	receiving any packets	*/
-int Server::Run()
+void Server::Run()
 {
 	std::thread connectionThread(&Server::ConnectClients, this, &m_Clients);
 
 	ManagePackets();
-
-	return 0;
 }

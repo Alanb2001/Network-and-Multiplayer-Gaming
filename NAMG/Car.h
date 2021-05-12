@@ -8,8 +8,6 @@ struct Car
 	float angle;
 	int n;
 
-// TODO: use checkpoint to make sure we are on the track.
-// Slow speed when not on the track.
 	int points[8][2] = 
 	{ 
 	  300, 610,
@@ -21,7 +19,6 @@ struct Car
 	  2560,3150,
 	  500, 3300 
 	};
-
 
 	Car() :
 		speed(2.f),
@@ -51,10 +48,9 @@ struct Car
 		{
 			angle -= 0.005f * speed;
 		}
-		// Check if passed a checkpoint
 		if ((position.x - tx) * (position.x - tx) + (position.y - ty) * (position.y - ty) < 25 * 25)
 		{
-			n = (n + 1) % 8; // TODO: simplify
+			n = (n + 1) % 8;
 		}
 	}
 };

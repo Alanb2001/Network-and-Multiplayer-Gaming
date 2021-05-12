@@ -6,7 +6,6 @@
 #include <vector>
 
 #include "SharedData.h"
-#include "FPS.h"
 #include "Car.h"
 
 class Client
@@ -16,7 +15,7 @@ public:
 	void ReceivePackets(sf::TcpSocket* socket);
 	void SendPacket(sf::Packet& packet);
 	bool GameClient();
-	int Run();
+	void Run();
 	void Events();
 	void Movement();
 	void Collision();
@@ -26,10 +25,7 @@ private:
 	sf::IpAddress m_address = sf::IpAddress::getLocalAddress();
 	sf::TcpSocket m_socket;
 	sf::Packet m_packet;
-	sf::Mutex m_globalMutex;
 	bool m_isConnected = false;
-	bool m_quit = false;
-	std::string m_messageSend;
 	std::string m_username;
 	sf::RenderWindow m_window;
 	sf::Texture m_backgroundTexture;
@@ -44,7 +40,6 @@ private:
 	float m_turnSpeed;
 	int m_offsetX;
 	int m_offsetY;
-	FPS m_fpsCounter;
 	sf::Clock m_clock;
 	float m_packetTimer;
 	float m_timeElapsed;

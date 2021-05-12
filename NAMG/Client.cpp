@@ -19,7 +19,7 @@ Client::Client() :
 	m_packetTimer(1.f),
 	m_timeElapsed(0.f)
 {
-	std::cout << "Chat client started" << std::endl;
+	std::cout << "Client started" << std::endl;
 
 	m_window.setFramerateLimit(60);
 
@@ -55,22 +55,7 @@ void Client::ReceivePackets(sf::TcpSocket* socket)
 			packet >> inCarData;
 
 			std::cout << "From " << inCarData.m_username << ": " << inCarData.m_angle << inCarData.m_position << std::endl;
-
 		}
-	}
-
-	switch (inCarData.m_type)
-	{
-	case eDataPackets::e_None:
-		break;
-	case eDataPackets::e_Connect:
-		break;
-	case eDataPackets::e_GameStart:
-		break;
-	case eDataPackets::e_Disconnect:
-		break;
-	default:
-		break;
 	}
 }
 
@@ -108,7 +93,7 @@ bool Client::GameClient()
 
 /* This function runs all the game code in the while loop, it also sends packets out to the server
 	and also receive packets back from the server using a thread*/
-int Client::Run()
+void Client::Run()
 {
 	GameClient();
 
@@ -127,15 +112,11 @@ int Client::Run()
 
 	while (m_window.isOpen())
 	{
-		m_fpsCounter.update();
-
-		m_window.setTitle("Racing Game: " + std::to_string(m_fpsCounter.getFPS()));
-
 		if (m_isConnected)
 		{
 			sf::Packet replyPacket;
 
-			CarData outData(eDataPackets::e_GameStart, m_username, m_carContainer[0].angle, m_carContainer[0].position);
+			CarData outData(m_username, m_carContainer[0].angle, m_carContainer[0].position);
 
 			replyPacket << outData;
 
@@ -161,8 +142,6 @@ int Client::Run()
 		}
 		m_window.display();
 	}
-
-	return 0;
 }
 
 void Client::Events()
@@ -284,8 +263,25 @@ void Client::Collision()
 		}
 	}
 
-	// TODO: Stay within the limit of the map.
-	// TODO: Don't show white at bottom/right.
+	// Keeps car in screen boundary. 
+	if (m_carContainer[0].position.x < 25)
+	{
+		m_carContainer[0].position.x = 25;
+	}
+	if (m_carContainer[0].position.y < 25)
+	{
+		m_carContainer[0].position.y = 25;
+	}
+	if (m_carContainer[0].position.x >= 2855)
+	{
+		m_carContainer[0].position.x = 2855;
+	}
+	if (m_carContainer[0].position.y >= 3620)
+	{
+		m_carContainer[0].position.y = 3620;
+	}
+
+	// Removes white space from background.
 	if (m_carContainer[0].position.x > 320)
 	{
 		m_offsetX = m_carContainer[0].position.x - 320;
@@ -293,5 +289,13 @@ void Client::Collision()
 	if (m_carContainer[0].position.y > 240)
 	{
 		m_offsetY = m_carContainer[0].position.y - 240;
+	}
+	if (m_carContainer[0].position.x  >= 2560)
+	{
+		m_offsetX = 2240;
+	}
+	if (m_carContainer[0].position.y >= 3400)
+	{
+		m_offsetY = 3165;
 	}
 }
