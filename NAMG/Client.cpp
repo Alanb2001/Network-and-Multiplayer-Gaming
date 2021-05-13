@@ -17,11 +17,14 @@ Client::Client() :
 	m_offsetX(0),
 	m_offsetY(0),
 	m_packetTimer(1.f),
-	m_timeElapsed(0.f)
+	m_timeElapsed(0.f),
+	m_backgroundMask()
 {
 	std::cout << "Client started" << std::endl;
 
 	m_window.setFramerateLimit(60);
+
+	m_backgroundMask.loadFromFile("images/BackgroundMask.png");
 
 	m_backgroundTexture.loadFromFile("images/background.png");
 	m_backgroundTexture.setSmooth(true);
@@ -221,7 +224,14 @@ void Client::Movement()
 	{
 		m_angle -= m_turnSpeed * m_speed / m_maxSpeed;
 	}
-	m_carContainer[0].speed = m_speed;
+
+	float speedModifier = 1.0f;
+
+	if (m_backgroundMask.getPixel(m_carContainer[0].position.x / 2, m_carContainer[0].position.y / 2).r != 254)
+	{
+		speedModifier = 0.5f;
+	}
+	m_carContainer[0].speed = m_speed * speedModifier;
 	m_carContainer[0].angle = m_angle;
 	for (int i = 0; i < N; i++)
 	{

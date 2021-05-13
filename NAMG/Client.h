@@ -44,5 +44,6 @@ private:
 	float m_packetTimer;
 	float m_timeElapsed;
 	std::vector<Car> m_carContainer;
+	sf::Image m_backgroundMask;
 };
 
