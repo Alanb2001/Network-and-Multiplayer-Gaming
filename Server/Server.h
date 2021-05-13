@@ -21,6 +21,5 @@ private:
 	const unsigned short m_Port = 5000;
 	sf::IpAddress m_Address = sf::IpAddress::getLocalAddress();
 	std::vector<sf::TcpSocket*> m_Clients;
-	sf::SocketSelector m_Selector;
 	sf::TcpListener m_Listener;
 };

@@ -79,6 +79,7 @@ void Client::SendPacket(sf::Packet& packet)
 	m_clock.restart();
 }
 
+// This function allows a client to connect to a server.
 bool Client::GameClient()
 {
 	if (m_socket.connect(m_address, m_port) != sf::Socket::Done)
@@ -95,7 +96,7 @@ bool Client::GameClient()
 }
 
 /* This function runs all the game code in the while loop, it also sends packets out to the server
-	and also receive packets back from the server using a thread*/
+	and also receive packets back from the server using a thread */
 void Client::Run()
 {
 	GameClient();
@@ -124,7 +125,6 @@ void Client::Run()
 			replyPacket << outData;
 
 			SendPacket(replyPacket);
-
 		}
 
 		Events();
@@ -227,6 +227,7 @@ void Client::Movement()
 
 	float speedModifier = 1.0f;
 
+	//Checks to see if it is off track and if so, slows car down.
 	if (m_backgroundMask.getPixel(m_carContainer[0].position.x / 2, m_carContainer[0].position.y / 2).r != 254)
 	{
 		speedModifier = 0.5f;

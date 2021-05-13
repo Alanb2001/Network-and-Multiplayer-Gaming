@@ -52,6 +52,7 @@ void Server::ReceivePacket(sf::TcpSocket* client, size_t iterator)
 	}
 }
 
+// This function checks if a client is going to join.
 void Server::ConnectClients(std::vector<sf::TcpSocket*>* client) 
 {
 	while (true)
@@ -62,7 +63,6 @@ void Server::ConnectClients(std::vector<sf::TcpSocket*>* client)
 			newClient->setBlocking(false);
 			client->push_back(newClient);
 			std::cout << "Added client " << newClient->getRemoteAddress() << " on slot " << client->size() << std::endl;
-	     		
 		}
 		else
 		{
@@ -81,6 +81,7 @@ void Server::DisconnectClient(sf::TcpSocket* socket, size_t position)
 	m_Clients.erase(m_Clients.begin() + position);
 }
 
+// This function goes through each client and receives packets. 
 void Server::ManagePackets()
 {
 	while (true)
